@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="buttonFFile" xml:space="preserve">
+    <value>Flash your device from a file on your PC. No check will be performed if the file is adapted to your device (S3, Lilygo S3, etc...).</value>
+  </data>
+  <data name="buttonFlash" xml:space="preserve">
+    <value>Download and flash a firmware adapted to your device with the resolution you have chosen. If the autodetected device is not corresponding to the correct one in the device list, you can change the "S3" and "Lilygo" state by double-clicking it.</value>
+  </data>
+  <data name="buttonLTest" xml:space="preserve">
+    <value>Perform an LED test of the selected device (the display should go full red, then full green then full blue).</value>
+  </data>
+  <data name="buttonRescan" xml:space="preserve">
+    <value>Rescan all the devices connected to your PC. Automatically done when a device has been flashed.</value>
+  </data>
+  <data name="deviceView" xml:space="preserve">
+    <value>List of found devices. It could be something else than an ESP32, but all COM devices are listed to be sure there is no 'exotic' ESP32 missing. You can force it to be S3 or Lilygo S3 by double-clicking the corresponding box, the detection is not infallible and once again, 'exotic' devices may exist. If the version is written in red, the firmware is not the latest available.</value>
+  </data>
+  <data name="numericUPSize" xml:space="preserve">
+    <value>For USB transfer mode, this will determine the size of the buffer to be transferred at once. The higher, the better for smoothness, the lower, the better for stability. Start low and increase until the display is not stable anymore. [32,1920]</value>
+  </data>
+  <data name="numericOY" xml:space="preserve">
+    <value>If the resolution of your panel is 128x64, you can set the vertical position of the display of 4:1 or 3:1 roms on it with this value in pixels. [0,32]</value>
+  </data>
+  <data name="numericUDelay" xml:space="preserve">
+    <value>The delay between 2 transfers for stability. Try to set it as low as possible.</value>
+  </data>
+  <data name="radio12832" xml:space="preserve">
+    <value>The firmware to be downloaded and flashed will be for a panel of 128x32.</value>
+  </data>
+  <data name="radio12864" xml:space="preserve">
+    <value>The firmware to be downloaded and flashed will be for a panel of 128x64 and you can set the vertical offset below.</value>
+  </data>
+  <data name="radio25664" xml:space="preserve">
+    <value>The firmware to be downloaded and flashed will be for a panel of 256x64.</value>
+  </data>
+  <data name="radioUsb" xml:space="preserve">
+    <value>Set transfer mode to USB. For S3 and Lilygo S3, the CDC USB connection will be used, no UART mode will be maintained anymore for these devices. Fill the USBpackage size below, too.</value>
+  </data>
+  <data name="radioWTcp" xml:space="preserve">
+    <value>Set the transfer mode as WiFi via TC protocol. Don't forget to fill the WiFi SSID and WiFi password, too.</value>
+  </data>
+  <data name="radioWUdp" xml:space="preserve">
+    <value>Set the transfer mode as WiFi via UD protocol, you can then set the UDP delay in ms below. Don't forget to fill the WiFi SSID and WiFi password, too.</value>
+  </data>
+  <data name="textPassword" xml:space="preserve">
+    <value>The password for your WiFi connection to the SSID.</value>
+  </data>
+  <data name="textSsid" xml:space="preserve">
+    <value>The name of your internet WiFi SSID. </value>
+  </data>
+  <data name="versionList" xml:space="preserve">
+    <value>List of available firmware version with more recent ones on top. Choose the one you want to install on your selected device.</value>
+  </data>
+  <data name="numericROrder" xml:space="preserve">
+    <value>Not all the LED matrix displays are the same, the order of the RGB data can be GRB, BGR, RGB,...  With this value you can try different values until the ZeDMD logo is red in the top left, green in the bottom right and blue in the top right of the panel. [0,5]</value>
+  </data>
+  <data name="numericBrightness" xml:space="preserve">
+    <value>Set the brightness of your panel here. [1,15]</value>
+  </data>
+  <data name="numericPDriver" xml:space="preserve">
+    <value>The type of drivers (chip) of your panel: 0(SHIFTREG),1(FM6124),2(FM6126A),3(ICN2038S),4(MBI5124),5(SM5266P),6(DP3246_SM5368)</value>
+  </data>
+  <data name="numericPCPhase" xml:space="preserve">
+    <value>The clock phase of your panel. [0,1]</value>
+  </data>
+  <data name="numericPISpeed" xml:space="preserve">
+    <value>The I2S speed of your panel. Either 8, 16 or 20.</value>
+  </data>
+  <data name="numericPLBlanking" xml:space="preserve">
+    <value>The latch blanking of your panel. [1,4]</value>
+  </data>
+  <data name="numericPMRRate" xml:space="preserve">
+    <value>The minimum refresh rate of your panel. [30,120]</value>
+  </data>
+  <data name="buttonSNParameters" xml:space="preserve">
+    <value>Transfer these parameters to your device.</value>
+  </data>
+</root>

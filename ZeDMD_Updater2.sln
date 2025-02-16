@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeDMD_Updater2", "ZeDMD_Updater2.csproj", "{A63606F6-FD24-4BD4-B189-D66E3DBDC467}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A63606F6-FD24-4BD4-B189-D66E3DBDC467}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{A63606F6-FD24-4BD4-B189-D66E3DBDC467}.Debug|x64.ActiveCfg = Debug|x64
+		{A63606F6-FD24-4BD4-B189-D66E3DBDC467}.Debug|x64.Build.0 = Debug|x64
+		{A63606F6-FD24-4BD4-B189-D66E3DBDC467}.Release|Any CPU.ActiveCfg = Release|x64
+		{A63606F6-FD24-4BD4-B189-D66E3DBDC467}.Release|x64.ActiveCfg = Release|x64
+		{A63606F6-FD24-4BD4-B189-D66E3DBDC467}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
