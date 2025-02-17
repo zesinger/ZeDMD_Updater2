@@ -86,7 +86,7 @@ namespace ZeDMD_Updater2
         {
             IntPtr _pZeDMD = IntPtr.Zero;
             _pZeDMD = ZeDMD_GetInstance();
-            string comport = @"\\.\COM" + devCOM.ToString();
+            string comport = @"COM" + devCOM.ToString();
             ZeDMD_SetDevice(_pZeDMD, comport);
             if (ZeDMD_Open(_pZeDMD))
             {
