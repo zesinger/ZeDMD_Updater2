@@ -159,6 +159,7 @@ namespace ZeDMD_Updater2
                 }
                 form.deviceView.Items.Add(item);
             }
+            if (form.deviceView.Items.Count ==1) form.deviceView.SelectedIndices.Add(0);
             form.buttonLTest.Enabled = false;
         }
     }

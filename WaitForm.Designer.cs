@@ -35,9 +35,9 @@
             // 
             this.mainText.AutoEllipsis = true;
             this.mainText.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mainText.Location = new System.Drawing.Point(18, 27);
+            this.mainText.Location = new System.Drawing.Point(12, 9);
             this.mainText.Name = "mainText";
-            this.mainText.Size = new System.Drawing.Size(592, 112);
+            this.mainText.Size = new System.Drawing.Size(598, 212);
             this.mainText.TabIndex = 0;
             this.mainText.Text = "Please wait while populating the versions available...";
             this.mainText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -46,8 +46,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(622, 162);
+            this.ClientSize = new System.Drawing.Size(622, 230);
             this.Controls.Add(this.mainText);
+            this.MaximizeBox = false;
             this.Name = "WaitForm";
             this.Text = "Please wait...";
             this.ResumeLayout(false);

@@ -87,6 +87,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Resources\Description.fr.resx" />
     <EmbeddedResource Include="Resources\Description.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Description.Designer.cs</LastGenOutput>

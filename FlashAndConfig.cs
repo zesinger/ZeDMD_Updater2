@@ -47,14 +47,14 @@ namespace ZeDMD_Updater2
                 return true;
             }
         }
-        public static bool SetZeDmdParameters(int comid, int brightness, int rgborder, int panelclockphase, int paneldriver,
+        public static bool SetZeDmdParameters(Esp32Device device, int brightness, int rgborder, int panelclockphase, int paneldriver,
             int paneli2sspeed, int panellatchblanking, int panelminrefresh, int transport, int udpdelay, int usbpackagesize,
             string wifissid, string wifipassword, int yoffset)
         {
             // using libzedmd api
             IntPtr _pZeDMD = IntPtr.Zero;
             _pZeDMD = Esp32Device.ZeDMD_GetInstance();
-            string comport = @"COM" + comid.ToString();
+            string comport = @"COM" + device.ComId.ToString();
             Esp32Device.ZeDMD_SetDevice(_pZeDMD, comport);
             if (Esp32Device.ZeDMD_Open(_pZeDMD))
             {
@@ -74,46 +74,25 @@ namespace ZeDMD_Updater2
                     Esp32Device.ZeDMD_SetWiFiSSID(_pZeDMD, wifissid);
                     Esp32Device.ZeDMD_SetWiFiPassword(_pZeDMD, wifipassword);
                 }
+                Esp32Device.ZeDMD_SaveSettings(_pZeDMD);
+                Esp32Device.ZeDMD_Close(_pZeDMD);
+            }
+            else
+            {
+                MessageBox.Show("Unable to Open the device on COM" + device.ComId.ToString() + " to set the parameters");
+                return false;
+            }
+            if (Esp32Device.ZeDMD_Open(_pZeDMD))
+            {
+                Esp32Device.GetZeDMDValues(device, _pZeDMD);
                 Esp32Device.ZeDMD_Close(_pZeDMD);
                 return true;
             }
-            MessageBox.Show("Unable to Open the device on COM" + comid.ToString() + " to set the parameters");
-            return false;
+            else
+            {
+                MessageBox.Show("Unable to Open the device on COM" + device.ComId.ToString() + " to set the parameters");
+                return false;
+            }
         }
     }
 }
-
-/*/// using zedmd-client version
-string commands = "--port=COM" + comid.ToString() + " ";
-commands += "--set-brightness=" + brightness.ToString() + " ";
-commands += "--set-rgb-order=" + rgborder.ToString() + " ";
-commands += "--set-panel-clkphase=" + panelclockphase.ToString() + " ";
-commands += "--set-panel-driver=" + paneldriver.ToString() + " ";
-commands += "--set-panel-i2sspeed=" + paneli2sspeed.ToString() + " ";
-commands += "--set-panel-latch-blanking=" + panellatchblanking.ToString() + " ";
-commands += "--set-panel-min-refresh=" + panelminrefresh.ToString() + " ";
-commands += "--set-transport=" + transport.ToString() + " ";
-commands += "--set-udp-delay=" + udpdelay.ToString() + " ";
-commands += "--set-usb-package-size=" + usbpackagesize.ToString() + " ";
-commands += "--set-wifi-ssid=" + wifissid + " ";
-commands += "--set-wifi-password=" + wifipassword+" ";
-commands += "--set-y-offset=" + yoffset.ToString();
-
-ProcessStartInfo processStartInfo = new ProcessStartInfo("zedmd-client.exe", commands);
-
-using (Process process = new Process())
-{
-    process.StartInfo = processStartInfo;
-    process.Start();
-    process.WaitForExit(); // Wait for the process to complete
-
-    int exitCode = process.ExitCode;
-
-    if (exitCode != 0)
-    {
-        MessageBox.Show("The parameters were not correctly set. ESP32 are known to have an issue while flashing at connection time, retry pushing the ESP32 'BOOT' button during the connection", "Failed");
-        return false;
-    }
-    return true;
-}
-*/

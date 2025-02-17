@@ -9,14 +9,19 @@ using System.Net;
 using System.Windows.Forms;
 using ZeDMD_Updater2.Resources;
 
+
 namespace ZeDMD_Updater2
 {
     public partial class MainForm : Form
     {
+        public readonly int Major_Version = 2;
+        public readonly int Minor_Version = 0;
+        public readonly int Patch_Version = 0;
         public MainForm()
         {
             InitializeComponent();
             AttachMouseEnterEvents(Controls);
+            Text = "ZeDMD Updater v" + Major_Version.ToString() + "." + Minor_Version.ToString() + "." + Patch_Version.ToString();
             MouseEnter += (s, e) => textDescription.Text = "";
             deviceView.ColumnWidthChanging += (sender, e) =>
             {
@@ -29,7 +34,7 @@ namespace ZeDMD_Updater2
             deviceView.MouseDoubleClick += deviceView_MouseDoubleClick;
             string latestVersion = "";
             WaitForm waitForm = new WaitForm();
-            waitForm.mainText.Text = "Please wait while listing the available firmwares and devices...";
+            waitForm.mainText.Text = "Please wait while listing the available firmwares and devices...\r\n Any ZeDMD connected must NOT be in menu mode!";
             BackgroundWorker worker = new BackgroundWorker();
             worker.DoWork += (s, ev) =>
             {
@@ -42,7 +47,7 @@ namespace ZeDMD_Updater2
                 InternetFirmwares.PopulateVersions(this);
                 Esp32Devices.PopulateESP(this);
                 Enabled = true;
-                waitForm.Hide();
+                waitForm.Close();
             };
             Enabled = false;
             worker.RunWorkerAsync();
@@ -81,6 +86,7 @@ namespace ZeDMD_Updater2
         }
         private void UpdateZeDMDList()
         {
+            int comId = Esp32Devices.esp32Devices[deviceView.SelectedItems[0].Index].ComId;
             Enabled = false;
             WaitForm waitForm = new WaitForm();
             waitForm.mainText.Text = "Please wait while updating the available devices...";
@@ -93,7 +99,16 @@ namespace ZeDMD_Updater2
             {
                 Esp32Devices.PopulateESP(this);
                 Enabled = true;
-                waitForm.Hide();
+                waitForm.Close();
+                for (int i=0;i<Esp32Devices.esp32Devices.Count;i++)
+                {
+                    Esp32Device device = Esp32Devices.esp32Devices[i];
+                    if (device.ComId == comId)
+                    {
+                        deviceView.SelectedIndices.Add(i);
+                        break;
+                    }
+                }
             };
             worker.RunWorkerAsync();
             waitForm.ShowDialog();
@@ -362,18 +377,36 @@ namespace ZeDMD_Updater2
         private void buttonRescan_Click(object sender, EventArgs e)
         {
             UpdateZeDMDList();
+
         }
 
         private void CalcAndSetParameters()
         {
-            int comport = Esp32Devices.esp32Devices[deviceView.SelectedIndices[0]].ComId;
             int transport;
             if (radioWUdp.Checked) transport = 1;
             else if (radioWTcp.Checked) transport = 2;
             else transport = 0;
-            FlashAndConfig.SetZeDmdParameters(comport, (int)numericBrightness.Value, (int)numericROrder.Value, (int)numericPCPhase.Value,
-                (int)numericPDriver.Value, (int)numericPISpeed.Value, (int)numericPLBlanking.Value, (int)numericPMRRate.Value,
-                transport, (int)numericUDelay.Value, (int)numericUPSize.Value, textSsid.Text, textPassword.Text, (int)numericOY.Value);
+            WaitForm waitForm = new WaitForm();
+            waitForm.mainText.Text = "Please wait while updating the parameters of your device...";
+
+            BackgroundWorker worker = new BackgroundWorker();
+            Esp32Device zd = Esp32Devices.esp32Devices[deviceView.SelectedIndices[0]];
+            worker.DoWork += (s, ev) =>
+            {
+                FlashAndConfig.SetZeDmdParameters(zd,
+                    (int)numericBrightness.Value, (int)numericROrder.Value, (int)numericPCPhase.Value,
+                    (int)numericPDriver.Value, (int)numericPISpeed.Value, (int)numericPLBlanking.Value, (int)numericPMRRate.Value,
+                    transport, (int)numericUDelay.Value, (int)numericUPSize.Value, textSsid.Text, textPassword.Text, (int)numericOY.Value);
+            };
+            worker.RunWorkerCompleted += (s, ev) =>
+            {
+                Esp32Devices.FillEsp32Values(deviceView.SelectedItems[0].Index, this);
+                Enabled = true;
+                waitForm.Close();
+            };
+            Enabled = false;
+            worker.RunWorkerAsync();
+            waitForm.ShowDialog();
         }
         private void buttonSNParameters_Click(object sender, EventArgs e)
         {

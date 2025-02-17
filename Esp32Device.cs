@@ -38,6 +38,23 @@ namespace ZeDMD_Updater2
             isLilygo = islilygo;
             isUnknown = isunknown;
         }
+        public static void GetZeDMDValues(Esp32Device device, IntPtr _pZeDMD)
+        {
+            device.RgbOrder = ZeDMD_GetRGBOrder(_pZeDMD);
+            device.Brightness = ZeDMD_GetBrightness(_pZeDMD);
+            device.Width = ZeDMD_GetPanelWidth(_pZeDMD);
+            device.Height = ZeDMD_GetPanelHeight(_pZeDMD);
+            device.SSID = Marshal.PtrToStringAnsi(ZeDMD_GetWiFiSSID(_pZeDMD));
+            device.SSIDPort = ZeDMD_GetWiFiPort(_pZeDMD);
+            device.PanelDriver = ZeDMD_GetPanelDriver(_pZeDMD);
+            device.PanelClockPhase = ZeDMD_GetPanelClockPhase(_pZeDMD);
+            device.PanelI2SSpeed = ZeDMD_GetPanelI2sSpeed(_pZeDMD);
+            device.PanelLatchBlanking = ZeDMD_GetPanelLatchBlanking(_pZeDMD);
+            device.PanelMinRefreshRate = ZeDMD_GetPanelMinRefreshRate(_pZeDMD);
+            device.UsbPacketSize = ZeDMD_GetUsbPackageSize(_pZeDMD);
+            device.UdpDelay = ZeDMD_GetUdpDelay(_pZeDMD);
+            device.YOffset = ZeDMD_GetYOffset(_pZeDMD);
+        }
         public static void CheckZeDMDs(ref List<Esp32Device> esp32Devices)
         {
             IntPtr _pZeDMD = IntPtr.Zero;
@@ -59,27 +76,7 @@ namespace ZeDMD_Updater2
                     device.MajVersion = major;
                     device.MinVersion = minor;
                     device.PatVersion = patch;
-                    // get the RGB order
-                    device.RgbOrder = ZeDMD_GetRGBOrder(_pZeDMD);
-                    // get the brightness
-                    device.Brightness = ZeDMD_GetBrightness(_pZeDMD);
-                    // get the width
-                    device.Width = ZeDMD_GetPanelWidth(_pZeDMD);
-                    if (device.Width == 0) device.Width = 256;
-                    // get the height
-                    device.Height = ZeDMD_GetPanelHeight(_pZeDMD);
-                    // get the Wifi SSID (if available, "" if not) and port
-                    device.SSID = Marshal.PtrToStringAnsi(ZeDMD_GetWiFiSSID(_pZeDMD));
-                    if (device.SSID != "") device.SSIDPort = ZeDMD_GetWiFiPort(_pZeDMD);
-                    else device.SSIDPort = -1;
-                    device.PanelDriver = ZeDMD_GetPanelDriver(_pZeDMD);
-                    device.PanelClockPhase = ZeDMD_GetPanelClockPhase(_pZeDMD);
-                    device.PanelI2SSpeed = ZeDMD_GetPanelI2sSpeed(_pZeDMD);
-                    device.PanelLatchBlanking = ZeDMD_GetPanelLatchBlanking(_pZeDMD);
-                    device.PanelMinRefreshRate = ZeDMD_GetPanelMinRefreshRate(_pZeDMD);
-                    device.UsbPacketSize = ZeDMD_GetUsbPackageSize(_pZeDMD);
-                    device.UdpDelay = ZeDMD_GetUdpDelay(_pZeDMD);
-                    device.YOffset = ZeDMD_GetYOffset(_pZeDMD);
+                    GetZeDMDValues(device, _pZeDMD);
                     ZeDMD_Close(_pZeDMD);
                 }
             }
@@ -199,7 +196,7 @@ namespace ZeDMD_Updater2
         public static extern void ZeDMD_SetTransport(IntPtr pZeDMD, byte transport);
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI void ZeDMD_SaveSettings(ZeDMD* pZeDMD);
-        private static extern void ZeDMD_SaveSettings(IntPtr pZeDMD);
+        public static extern void ZeDMD_SaveSettings(IntPtr pZeDMD);
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI void ZeDMD_LedTest(ZeDMD* pZeDMD);
         private static extern void ZeDMD_LedTest(IntPtr pZeDMD);

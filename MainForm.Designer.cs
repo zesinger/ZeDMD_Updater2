@@ -757,6 +757,8 @@ namespace ZeDMD_Updater2
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.LatestVersion);
             this.Controls.Add(this.buttonFlash);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "ZeDMD Updater v2";
             this.groupBox1.ResumeLayout(false);
