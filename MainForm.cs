@@ -6,10 +6,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Threading;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using ZeDMD_Updater2.Resources;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
 namespace ZeDMD_Updater2
@@ -22,22 +20,9 @@ namespace ZeDMD_Updater2
         public MainForm()
         {
             InitializeComponent();
-
-
-
-
-
-
-            //Thread.Sleep(5000);
-
-
-
-
-
-
-
             AttachMouseEnterEvents(Controls);
-            Text = "ZeDMD Updater v" + Major_Version.ToString() + "." + Minor_Version.ToString() + "." + Patch_Version.ToString();
+            string libzedmdvers = Marshal.PtrToStringAnsi(Esp32Device.ZeDMD_GetVersion());
+            Text = "ZeDMD Updater v" + Major_Version + "." + Minor_Version + "." + Patch_Version + " using libzedmd v" + libzedmdvers;
             MouseEnter += (s, e) => textDescription.Text = "";
             deviceView.ColumnWidthChanging += (sender, e) =>
             {
@@ -96,7 +81,7 @@ namespace ZeDMD_Updater2
             {
                 string description;
                 if (control != null && control.Parent is NumericUpDown numericUpDown)
-                    description= Resources.Description.ResourceManager.GetString(control.Parent.Name);
+                    description = Resources.Description.ResourceManager.GetString(control.Parent.Name);
                 else description = Resources.Description.ResourceManager.GetString(control.Name);
                 textDescription.Text = description ?? "";
             }
@@ -104,8 +89,7 @@ namespace ZeDMD_Updater2
         private void UpdateZeDMDList()
         {
             int comId = -1;
-            if (deviceView.SelectedItems.Count > 0)
-                comId = Esp32Devices.esp32Devices[deviceView.SelectedItems[0].Index].ComId;
+            if (deviceView.SelectedItems.Count > 0) comId = Esp32Devices.WhichDevice(this).ComId;
             Enabled = false;
             WaitForm waitForm = new WaitForm();
             waitForm.mainText.Text = "Please wait while updating the available devices...";
@@ -119,7 +103,7 @@ namespace ZeDMD_Updater2
                 Esp32Devices.PopulateESP(this);
                 Enabled = true;
                 waitForm.Close();
-                for (int i=0;i<Esp32Devices.esp32Devices.Count;i++)
+                for (int i = 0; i < Esp32Devices.esp32Devices.Count; i++)
                 {
                     Esp32Device device = Esp32Devices.esp32Devices[i];
                     if (device.ComId == comId)
@@ -202,7 +186,7 @@ namespace ZeDMD_Updater2
             if (deviceView.SelectedItems.Count == 1)
             {
                 buttonFFile.Enabled = true;
-                Esp32Device ed = Esp32Devices.esp32Devices[deviceView.SelectedItems[0].Index];
+                Esp32Device ed = Esp32Devices.WhichDevice(this);
                 if (ed.isZeDMD)
                 {
                     buttonLTest.Enabled = true;
@@ -222,6 +206,7 @@ namespace ZeDMD_Updater2
             }
             else
             {
+                // no selected items
                 buttonFFile.Enabled = false;
                 buttonLTest.Enabled = false;
                 buttonSNParameters.Enabled = false;
@@ -230,7 +215,6 @@ namespace ZeDMD_Updater2
             }
 
         }
-
         private void versionList_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (deviceView.SelectedItems.Count == 1)
@@ -256,7 +240,7 @@ namespace ZeDMD_Updater2
             {
                 // Get the selected file path
                 string filePath = openFileDialog.FileName;
-                Esp32Device zeddev = Esp32Devices.esp32Devices[deviceView.SelectedItems[0].Index];
+                Esp32Device zeddev = Esp32Devices.WhichDevice(this);
                 flashed = FlashAndConfig.FlashEsp32(zeddev, filePath);
             }
             Enabled = true;
@@ -268,13 +252,13 @@ namespace ZeDMD_Updater2
 
         private void buttonLTest_Click(object sender, EventArgs e)
         {
-            Esp32Device.LedTest(Esp32Devices.esp32Devices[deviceView.SelectedItems[0].Index].ComId);
+            Esp32Device.LedTest(this);
         }
 
         private void buttonFlash_Click(object sender, EventArgs e)
         {
             Enabled = false;
-            Esp32Device zeddev = Esp32Devices.esp32Devices[deviceView.SelectedItems[0].Index];
+            Esp32Device zeddev = Esp32Devices.WhichDevice(this);
             int vernum = versionList.SelectedIndex;
             if (vernum < 0) return;
             vernum = InternetFirmwares.navVersions - vernum - 1;
@@ -323,7 +307,7 @@ namespace ZeDMD_Updater2
                                 string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                                 string filePath = Path.Combine(documentsPath, firmwareFileName);
                                 System.IO.File.WriteAllBytes(filePath, firmwareData);
-                                flashed = FlashAndConfig.FlashEsp32(zeddev,filePath);
+                                flashed = FlashAndConfig.FlashEsp32(zeddev, filePath);
                                 System.IO.File.Delete(filePath);
 
 
@@ -392,6 +376,7 @@ namespace ZeDMD_Updater2
 
         private void CalcAndSetParameters()
         {
+            if (deviceView.SelectedItems.Count == 0) return;
             int transport;
             if (radioWUdp.Checked) transport = 1;
             else if (radioWTcp.Checked) transport = 2;
@@ -400,7 +385,7 @@ namespace ZeDMD_Updater2
             waitForm.mainText.Text = "Please wait while updating the parameters of your device...";
 
             BackgroundWorker worker = new BackgroundWorker();
-            Esp32Device zd = Esp32Devices.esp32Devices[deviceView.SelectedIndices[0]];
+            Esp32Device zd = Esp32Devices.WhichDevice(this);
             worker.DoWork += (s, ev) =>
             {
                 FlashAndConfig.SetZeDmdParameters(zd,

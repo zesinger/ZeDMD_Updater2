@@ -68,20 +68,76 @@ namespace ZeDMD_Updater2
         }
         public static void CheckZeDMDs(ref List<Esp32Device> esp32Devices, ref Esp32Device wifiDevice)
         {
+            // create an instance
             IntPtr _pZeDMD = IntPtr.Zero;
             _pZeDMD = ZeDMD_GetInstance();
-            // first check if we have a wifi device
+            // check if a ZeDMD wifi is available
+            byte wifitransport=2;
             if (ZeDMD_OpenDefaultWiFi(_pZeDMD))
             {
+                // if so, get all the parameters
                 wifiDevice.isWifi = true;
                 wifiDevice.isZeDMD = true;
                 wifiDevice.isUnknown = false;
                 GetZeDMDValues(wifiDevice, _pZeDMD);
-                wifiDevice.WifiIp= Marshal.PtrToStringAnsi(ZeDMD_GetIp(_pZeDMD));
+                wifiDevice.WifiIp = Marshal.PtrToStringAnsi(ZeDMD_GetIp(_pZeDMD));
+                // keep the transport mode for later
+                wifitransport = ZeDMD_GetTransport(_pZeDMD);
+                // switch this device to USB
+                ZeDMD_SetTransport(_pZeDMD, 0);
+                ZeDMD_SaveSettings(_pZeDMD);
+                ZeDMD_Reset(_pZeDMD);
                 ZeDMD_Close(_pZeDMD);
             }
+            // isUnknown==true if wifiDevice does not exist
             else wifiDevice.isUnknown = true;
-            // then check for all the USB ones
+            // then look for USB ZeDMDs, esp32Devices contains an empty Esp32Device for all the COM#
+            // declared in Windows, except their COM#
+            int wifif = -1;
+            for (int i = 0; i < esp32Devices.Count; i++)
+            {
+                // open the device
+                Esp32Device device = esp32Devices[i];
+                string comport = @"COM" + device.ComId.ToString();
+                ZeDMD_SetDevice(_pZeDMD, comport);
+                if (ZeDMD_Open(_pZeDMD))
+                {
+                    // get its parameters
+                    device.isWifi = false;
+                    device.isUnknown = false;
+                    device.isZeDMD = true;
+                    GetZeDMDValues(device, _pZeDMD);
+                    // look if the device ID returned is the same than the wifi one
+                    if (device.ZeID == wifiDevice.ZeID)
+                    {
+                        // if true, this is the same device, and so we can set the COM# of the wifiDevice
+                        wifiDevice.ComId = device.ComId;
+                        wifif = i;
+                        // switch it back to wifi with the transport mode it had before
+                        ZeDMD_SetTransport(_pZeDMD, wifitransport);
+                        ZeDMD_SaveSettings(_pZeDMD);
+                        ZeDMD_Reset(_pZeDMD);
+                    }
+                    ZeDMD_Close(_pZeDMD);
+                }
+            }
+            // if we have found the wifi device in the USB devices, we can remove it from the USB list
+            if (wifif >= 0) esp32Devices.RemoveAt(wifif);
+        }
+        /*public static void CheckUZeDMDs(IntPtr _pZeDMD, ref List<Esp32Device> esp32Devices, Esp32Device wifiDevice)
+        {
+            int comwifi = -1;
+            if (!wifiDevice.isUnknown) comwifi = wifiDevice.ComId;
+            // we remove the device corresponding to the wifi device
+            foreach (var device in esp32Devices)
+            {
+                if (device.ComId == comwifi)
+                {
+                    esp32Devices.Remove(device);
+                    break;
+                }
+            }
+            // then we can get the details of the remaining ones
             foreach (var device in esp32Devices)
             {
                 string comport = @"COM" + device.ComId.ToString();
@@ -97,13 +153,29 @@ namespace ZeDMD_Updater2
                 }
             }
         }
-        public static void LedTest(int devCOM)
+        public static void CheckZeDMDs(ref List<Esp32Device> esp32Devices, ref Esp32Device wifiDevice)
         {
             IntPtr _pZeDMD = IntPtr.Zero;
             _pZeDMD = ZeDMD_GetInstance();
-            string comport = @"COM" + devCOM.ToString();
-            ZeDMD_SetDevice(_pZeDMD, comport);
-            if (ZeDMD_Open(_pZeDMD))
+            // first check if we have a wifi device
+            CheckWZeDMD(_pZeDMD, ref wifiDevice, esp32Devices);
+            // then check for all the USB ones
+            CheckUZeDMDs(_pZeDMD, ref esp32Devices, wifiDevice);
+        }*/
+        public static void LedTest(MainForm form)
+        {
+            IntPtr _pZeDMD = IntPtr.Zero;
+            _pZeDMD = ZeDMD_GetInstance();
+            Esp32Device ed = Esp32Devices.WhichDevice(form);
+            bool openOK = false;
+            if (ed.isWifi) openOK = ZeDMD_OpenDefaultWiFi(_pZeDMD);
+            else
+            {
+                string comport = @"COM" + ed.ComId.ToString();
+                ZeDMD_SetDevice(_pZeDMD, comport);
+                openOK = ZeDMD_Open(_pZeDMD);
+            }
+            if (openOK)
             {
                 ZeDMD_LedTest(_pZeDMD);
                 ZeDMD_Close(_pZeDMD);
@@ -113,6 +185,9 @@ namespace ZeDMD_Updater2
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI ZeDMD* ZeDMD_GetInstance();
         public static extern IntPtr ZeDMD_GetInstance();
+        [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        // C format: extern ZEDMDAPI const char* ZeDMD_GetVersion();
+        public static extern IntPtr ZeDMD_GetVersion();
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI void ZeDMD_SetDevice(ZeDMD* pZeDMD, const char* const device);
         public static extern bool ZeDMD_SetDevice(IntPtr pZeDMD, string device);
@@ -225,8 +300,14 @@ namespace ZeDMD_Updater2
         // C format: extern ZEDMDAPI void ZeDMD_SetTransport(ZeDMD* pZeDMD, uint8_t transport);
         public static extern void ZeDMD_SetTransport(IntPtr pZeDMD, byte transport);
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        // C format: extern ZEDMDAPI uint8_t ZeDMD_GetTransport(ZeDMD* pZeDMD);
+        public static extern byte ZeDMD_GetTransport(IntPtr pZeDMD);
+        [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI void ZeDMD_SaveSettings(ZeDMD* pZeDMD);
         public static extern void ZeDMD_SaveSettings(IntPtr pZeDMD);
+        [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        // C format: extern ZEDMDAPI void ZeDMD_Reset(ZeDMD* pZeDMD);
+        public static extern void ZeDMD_Reset(IntPtr pZeDMD);
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI void ZeDMD_LedTest(ZeDMD* pZeDMD);
         private static extern void ZeDMD_LedTest(IntPtr pZeDMD);

@@ -16,9 +16,9 @@ namespace ZeDMD_Updater2
         public static int[] I2SallowedSpeed = { 8, 16, 20 };
         public static void FillEsp32Values(int deviceId, MainForm form)
         {
-            if (deviceId >= 0 && esp32Devices[deviceId].isZeDMD)
+            Esp32Device ed = WhichDevice(form);
+            if (ed!=null && ed.isZeDMD)
             {
-                Esp32Device ed = esp32Devices[deviceId];
                 form.numericPDriver.Value = Clamp(ed.PanelDriver, Convert.ToInt32(form.numericPDriver.Minimum), Convert.ToInt32(form.numericPDriver.Maximum));
                 form.numericPCPhase.Value = Clamp(ed.PanelClockPhase, Convert.ToInt32(form.numericPCPhase.Minimum), Convert.ToInt32(form.numericPCPhase.Maximum));
                 // we take the closest available I2SSpeed
@@ -107,6 +107,14 @@ namespace ZeDMD_Updater2
                 }
             }
         }
+        public static Esp32Device WhichDevice(MainForm form)
+        {
+            if (form.deviceView.SelectedItems.Count == 0) return null;
+            int selit = form.deviceView.SelectedItems[0].Index;
+            if (selit > 0 && !wifiDevice.isUnknown) return esp32Devices[selit - 1];
+            else if (wifiDevice.isUnknown) return esp32Devices[selit];
+            return wifiDevice;
+        }
         public static string DisplayedVersion(Esp32Device device)
         {
             return device.MajVersion.ToString() + "." + device.MinVersion.ToString() + "." + device.PatVersion.ToString();
@@ -128,6 +136,31 @@ namespace ZeDMD_Updater2
             form.deviceView.Items.Clear();
             form.deviceView.ShowGroups = true;
             ListView.ColumnHeaderCollection lvchc = form.deviceView.Columns;
+            if (!wifiDevice.isUnknown)
+            {
+                ListViewItem item = new ListViewItem(new string[form.deviceView.Columns.Count]);
+                item.SubItems[lvchc.IndexOf(form.columnCOM)].Text = wifiDevice.ComId.ToString();
+                string tstr;
+                if (wifiDevice.isUnknown) tstr = "Unknown";
+                else if (wifiDevice.isZeDMD) tstr = "ZeDMD";
+                else tstr = "Stock ESP32";
+                item.SubItems[lvchc.IndexOf(form.columnType)].Text = tstr;
+                if (wifiDevice.isS3) tstr = "Yes"; else tstr = "No";
+                item.SubItems[lvchc.IndexOf(form.columnS3)].Text = tstr;
+                if (wifiDevice.isLilygo) tstr = "Yes"; else tstr = "No";
+                item.SubItems[lvchc.IndexOf(form.columnLilygo)].Text = tstr;
+                item.SubItems[lvchc.IndexOf(form.columnDevId)].Text = ((UInt16)wifiDevice.ZeID).ToString("X4");
+                item.SubItems[lvchc.IndexOf(form.columnWifiIP)].Text = wifiDevice.WifiIp;
+                if (wifiDevice.MajVersion != InternetFirmwares.avmajVersion || wifiDevice.MinVersion != InternetFirmwares.avminVersion ||
+                    wifiDevice.PatVersion != InternetFirmwares.avpatVersion)
+                {
+                    item.SubItems[lvchc.IndexOf(form.columnVersion)].Text = "*" + DisplayedVersion(wifiDevice) + "*";
+                }
+                else item.SubItems[lvchc.IndexOf(form.columnVersion)].Text = DisplayedVersion(wifiDevice);
+                item.SubItems[lvchc.IndexOf(form.columnWidth)].Text = wifiDevice.Width.ToString();
+                item.SubItems[lvchc.IndexOf(form.columnHeight)].Text = wifiDevice.Height.ToString();
+                form.deviceView.Items.Add(item);
+            }
             foreach (var device in esp32Devices)
             {
                 ListViewItem item = new ListViewItem(new string[form.deviceView.Columns.Count]);
@@ -142,19 +175,6 @@ namespace ZeDMD_Updater2
                 if (device.isLilygo) tstr = "Yes"; else tstr = "No";
                 item.SubItems[lvchc.IndexOf(form.columnLilygo)].Text = tstr;
                 item.SubItems[lvchc.IndexOf(form.columnDevId)].Text = ((UInt16)device.ZeID).ToString("X4");
-
-
-
-
-
-
-                //if (device.isWifi) item.SubItems[lvchc.IndexOf(form.columnWifiIP)].Text = device.WifiIp;
-                //else
-                
-                
-                
-                
-                
                 item.SubItems[lvchc.IndexOf(form.columnWifiIP)].Text = "-----------";
                 if (device.isZeDMD)
                 {

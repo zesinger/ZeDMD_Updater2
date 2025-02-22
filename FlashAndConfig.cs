@@ -51,9 +51,15 @@ namespace ZeDMD_Updater2
             // using libzedmd api
             IntPtr _pZeDMD = IntPtr.Zero;
             _pZeDMD = Esp32Device.ZeDMD_GetInstance();
-            string comport = @"COM" + device.ComId.ToString();
-            Esp32Device.ZeDMD_SetDevice(_pZeDMD, comport);
-            if (Esp32Device.ZeDMD_Open(_pZeDMD))
+            bool openOK = false;
+            if (device.isWifi) openOK=Esp32Device.ZeDMD_OpenDefaultWiFi(_pZeDMD);
+            else
+            {
+                string comport = @"COM" + device.ComId.ToString();
+                Esp32Device.ZeDMD_SetDevice(_pZeDMD, comport);
+                openOK=Esp32Device.ZeDMD_Open(_pZeDMD);
+            }
+            if (openOK)
             {
                 Esp32Device.ZeDMD_SetBrightness(_pZeDMD, (byte)brightness);
                 Esp32Device.ZeDMD_SetRGBOrder(_pZeDMD, (byte)rgborder);
