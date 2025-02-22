@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Threading;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace ZeDMD_Updater2
@@ -67,32 +64,36 @@ namespace ZeDMD_Updater2
                 Esp32Device.ZeDMD_SetPanelMinRefreshRate(_pZeDMD, (byte)panelminrefresh);
                 Esp32Device.ZeDMD_SetTransport(_pZeDMD, (byte)transport);
                 Esp32Device.ZeDMD_SetUdpDelay(_pZeDMD, (byte)udpdelay);
-                Esp32Device.ZeDMD_SetUsbPackageSize(_pZeDMD, (UInt16)usbpackagesize);
+                Esp32Device.ZeDMD_SetUsbPackageSize(_pZeDMD, (ushort)usbpackagesize);
                 Esp32Device.ZeDMD_SetYOffset(_pZeDMD, (byte)yoffset);
-                if (wifissid!="")
+                if (wifissid != "")
                 {
                     Esp32Device.ZeDMD_SetWiFiSSID(_pZeDMD, wifissid);
                     Esp32Device.ZeDMD_SetWiFiPassword(_pZeDMD, wifipassword);
+                    //Esp32Device.ZeDMD_SetWiFiPort(_pZeDMD, 3333);
                 }
                 Esp32Device.ZeDMD_SaveSettings(_pZeDMD);
                 Esp32Device.ZeDMD_Close(_pZeDMD);
+                device.Brightness = brightness;
+                device.RgbOrder = rgborder;
+                device.PanelClockPhase = panelclockphase;
+                device.PanelDriver = paneldriver;
+                device.PanelI2SSpeed = paneli2sspeed;
+                device.PanelLatchBlanking = panellatchblanking;
+                device.PanelMinRefreshRate = panelminrefresh;
+                if (transport == 1 || transport == 2) device.isWifi = true;
+                else device.isWifi = false;
+                device.UdpDelay = udpdelay;
+                device.UsbPacketSize = usbpackagesize;
+                device.YOffset = yoffset;
+                device.SSID = wifissid;
             }
             else
             {
                 MessageBox.Show("Unable to Open the device on COM" + device.ComId.ToString() + " to set the parameters");
                 return false;
             }
-            if (Esp32Device.ZeDMD_Open(_pZeDMD))
-            {
-                Esp32Device.GetZeDMDValues(device, _pZeDMD);
-                Esp32Device.ZeDMD_Close(_pZeDMD);
-                return true;
-            }
-            else
-            {
-                MessageBox.Show("Unable to Open the device on COM" + device.ComId.ToString() + " to set the parameters");
-                return false;
-            }
+            return true;
         }
     }
 }

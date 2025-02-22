@@ -12,9 +12,10 @@ namespace ZeDMD_Updater2
         public bool isLilygo { get; set; } = false;
         public bool isZeDMD { get; set; } = false;
         public bool isWifi { get; set; } = false;
+        public string WifiIp { get; set; } = "";
+        public int ZeID { get; set; } = -1;
         public string SSID { get; set; } = "";
         public int SSIDPort { get; set; } = -1;
-        //public bool isCdc { get; set; } = false;
         public int RgbOrder { get; set; } = 0;
         public int Brightness { get; set; } = 6;
         public int Width { get; set; } = 128;
@@ -40,6 +41,15 @@ namespace ZeDMD_Updater2
         }
         public static void GetZeDMDValues(Esp32Device device, IntPtr _pZeDMD)
         {
+            device.isS3 = ZeDMD_IsS3(_pZeDMD);
+            string version = Marshal.PtrToStringAnsi(ZeDMD_GetFirmwareVersion(_pZeDMD));
+            string[] parts = version.Split('.');
+            int.TryParse(parts[0], out int major);
+            int.TryParse(parts[1], out int minor);
+            int.TryParse(parts[2], out int patch);
+            device.MajVersion = major;
+            device.MinVersion = minor;
+            device.PatVersion = patch;
             device.RgbOrder = ZeDMD_GetRGBOrder(_pZeDMD);
             device.Brightness = ZeDMD_GetBrightness(_pZeDMD);
             device.Width = ZeDMD_GetPanelWidth(_pZeDMD);
@@ -54,34 +64,39 @@ namespace ZeDMD_Updater2
             device.UsbPacketSize = ZeDMD_GetUsbPackageSize(_pZeDMD);
             device.UdpDelay = ZeDMD_GetUdpDelay(_pZeDMD);
             device.YOffset = ZeDMD_GetYOffset(_pZeDMD);
+            device.ZeID = ZeDMD_GetId(_pZeDMD);
         }
-        public static void CheckZeDMDs(ref List<Esp32Device> esp32Devices)
+        public static void CheckZeDMDs(ref List<Esp32Device> esp32Devices, ref Esp32Device wifiDevice)
         {
             IntPtr _pZeDMD = IntPtr.Zero;
             _pZeDMD = ZeDMD_GetInstance();
+            // first check if we have a wifi device
+            if (ZeDMD_OpenDefaultWiFi(_pZeDMD))
+            {
+                wifiDevice.isWifi = true;
+                wifiDevice.isZeDMD = true;
+                wifiDevice.isUnknown = false;
+                GetZeDMDValues(wifiDevice, _pZeDMD);
+                wifiDevice.WifiIp= Marshal.PtrToStringAnsi(ZeDMD_GetIp(_pZeDMD));
+                ZeDMD_Close(_pZeDMD);
+            }
+            else wifiDevice.isUnknown = true;
+            // then check for all the USB ones
             foreach (var device in esp32Devices)
             {
                 string comport = @"COM" + device.ComId.ToString();
                 ZeDMD_SetDevice(_pZeDMD, comport);
                 if (ZeDMD_Open(_pZeDMD))
                 {
+                    device.isWifi = false;
+                    device.isUnknown = false;
                     device.isZeDMD = true;
-                    device.isS3 = ZeDMD_IsS3(_pZeDMD);
-                    // get the firmware version
-                    string version = Marshal.PtrToStringAnsi(ZeDMD_GetFirmwareVersion(_pZeDMD));
-                    string[] parts = version.Split('.');
-                    int.TryParse(parts[0], out int major);
-                    int.TryParse(parts[1], out int minor);
-                    int.TryParse(parts[2], out int patch);
-                    device.MajVersion = major;
-                    device.MinVersion = minor;
-                    device.PatVersion = patch;
                     GetZeDMDValues(device, _pZeDMD);
+
                     ZeDMD_Close(_pZeDMD);
                 }
             }
         }
-
         public static void LedTest(int devCOM)
         {
             IntPtr _pZeDMD = IntPtr.Zero;
@@ -101,6 +116,9 @@ namespace ZeDMD_Updater2
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI void ZeDMD_SetDevice(ZeDMD* pZeDMD, const char* const device);
         public static extern bool ZeDMD_SetDevice(IntPtr pZeDMD, string device);
+        [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        // C format: extern ZEDMDAPI bool ZeDMD_OpenDefaultWiFi(ZeDMD* pZeDMD);
+        public static extern bool ZeDMD_OpenDefaultWiFi(IntPtr pZeDMD);
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI bool ZeDMD_Open(ZeDMD* pZeDMD);
         public static extern bool ZeDMD_Open(IntPtr pZeDMD);
@@ -123,20 +141,29 @@ namespace ZeDMD_Updater2
         // C format: extern ZEDMDAPI uint8_t ZeDMD_GetBrightness(ZeDMD* pZeDMD);
         protected static extern byte ZeDMD_GetYOffset(IntPtr pZeDMD);
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        // C format: extern ZEDMDAPI uint16_t ZeDMD_GetId(ZeDMD* pZeDMD);
+        protected static extern ushort ZeDMD_GetId(IntPtr pZeDMD);
+        [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI uint16_t ZeDMD_GetWidth(ZeDMD* pZeDMD);
-        protected static extern UInt16 ZeDMD_GetPanelWidth(IntPtr pZeDMD);
+        protected static extern ushort ZeDMD_GetPanelWidth(IntPtr pZeDMD);
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI uint16_t ZeDMD_GetHeight(ZeDMD* pZeDMD);
-        protected static extern UInt16 ZeDMD_GetPanelHeight(IntPtr pZeDMD);
+        protected static extern ushort ZeDMD_GetPanelHeight(IntPtr pZeDMD);
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI const char* ZeDMD_GetWiFiSSID(ZeDMD* pZeDMD);
         private static extern IntPtr ZeDMD_GetWiFiSSID(IntPtr pZeDMD);
+        [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        // C format: extern ZEDMDAPI const char* ZeDMD_GetIp(ZeDMD* pZeDMD);
+        private static extern IntPtr ZeDMD_GetIp(IntPtr pZeDMD);
+        [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        // C format: extern ZEDMDAPI const char* ZeDMD_GetDevice(ZeDMD* pZeDMD);
+        private static extern IntPtr ZeDMD_GetDevice(IntPtr pZeDMD);
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI int ZeDMD_GetWiFiPort(ZeDMD* pZeDMD);
         private static extern int ZeDMD_GetWiFiPort(IntPtr pZeDMD);
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI uint16_t ZeDMD_GetUsbPackageSize(ZeDMD* pZeDMD);
-        protected static extern UInt16 ZeDMD_GetUsbPackageSize(IntPtr pZeDMD);
+        protected static extern ushort ZeDMD_GetUsbPackageSize(IntPtr pZeDMD);
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI uint8_t ZeDMD_GetUdpDelay(ZeDMD* pZeDMD);
         protected static extern byte ZeDMD_GetUdpDelay(IntPtr pZeDMD);
@@ -168,6 +195,9 @@ namespace ZeDMD_Updater2
         // C format: extern ZEDMDAPI void ZeDMD_SetWiFiPassword(ZeDMD* pZeDMD, const char* const password);
         public static extern void ZeDMD_SetWiFiPassword(IntPtr pZeDMD, string password);
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        // C format: extern ZEDMDAPI void ZeDMD_SetWiFiPort(ZeDMD* pZeDMD, int port);
+        public static extern void ZeDMD_SetWiFiPort(IntPtr pZeDMD, int port);
+        [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI void ZeDMD_SetPanelDriver(ZeDMD* pZeDMD, uint8_t driver);
         public static extern void ZeDMD_SetPanelDriver(IntPtr pZeDMD, byte uint8_t);
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -187,7 +217,7 @@ namespace ZeDMD_Updater2
         public static extern void ZeDMD_SetUdpDelay(IntPtr pZeDMD, byte udpDelay);
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI void ZeDMD_SetUsbPackageSize(ZeDMD* pZeDMD, uint16_t usbPackageSize);
-        public static extern void ZeDMD_SetUsbPackageSize(IntPtr pZeDMD, UInt16 usbPackageSize);
+        public static extern void ZeDMD_SetUsbPackageSize(IntPtr pZeDMD, ushort usbPackageSize);
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI void ZeDMD_SetYOffset(ZeDMD* pZeDMD, uint8_t yOffset);
         public static extern void ZeDMD_SetYOffset(IntPtr pZeDMD, byte yOffset);

@@ -37,7 +37,9 @@ namespace ZeDMD_Updater2
             this.LatestVersion = new System.Windows.Forms.TextBox();
             this.buttonFlash = new System.Windows.Forms.Button();
             this.deviceView = new System.Windows.Forms.ListView();
+            this.columnDevId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnCOM = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnWifiIP = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnS3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnLilygo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -101,7 +103,7 @@ namespace ZeDMD_Updater2
             // buttonFFile
             // 
             this.buttonFFile.Enabled = false;
-            this.buttonFFile.Location = new System.Drawing.Point(431, 12);
+            this.buttonFFile.Location = new System.Drawing.Point(588, 12);
             this.buttonFFile.Name = "buttonFFile";
             this.buttonFFile.Size = new System.Drawing.Size(200, 27);
             this.buttonFFile.TabIndex = 36;
@@ -112,7 +114,7 @@ namespace ZeDMD_Updater2
             // versionList
             // 
             this.versionList.FormattingEnabled = true;
-            this.versionList.Location = new System.Drawing.Point(431, 87);
+            this.versionList.Location = new System.Drawing.Point(588, 87);
             this.versionList.Name = "versionList";
             this.versionList.Size = new System.Drawing.Size(200, 173);
             this.versionList.TabIndex = 30;
@@ -120,7 +122,7 @@ namespace ZeDMD_Updater2
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(431, 56);
+            this.textBox3.Location = new System.Drawing.Point(588, 56);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(200, 20);
@@ -133,7 +135,7 @@ namespace ZeDMD_Updater2
             this.LatestVersion.Location = new System.Drawing.Point(12, 12);
             this.LatestVersion.Name = "LatestVersion";
             this.LatestVersion.ReadOnly = true;
-            this.LatestVersion.Size = new System.Drawing.Size(405, 20);
+            this.LatestVersion.Size = new System.Drawing.Size(556, 20);
             this.LatestVersion.TabIndex = 26;
             this.LatestVersion.Text = "Detected devices :";
             this.LatestVersion.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -141,7 +143,7 @@ namespace ZeDMD_Updater2
             // buttonFlash
             // 
             this.buttonFlash.Enabled = false;
-            this.buttonFlash.Location = new System.Drawing.Point(431, 336);
+            this.buttonFlash.Location = new System.Drawing.Point(588, 336);
             this.buttonFlash.Name = "buttonFlash";
             this.buttonFlash.Size = new System.Drawing.Size(200, 23);
             this.buttonFlash.TabIndex = 25;
@@ -152,7 +154,9 @@ namespace ZeDMD_Updater2
             // deviceView
             // 
             this.deviceView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnDevId,
             this.columnCOM,
+            this.columnWifiIP,
             this.columnType,
             this.columnS3,
             this.columnLilygo,
@@ -165,15 +169,24 @@ namespace ZeDMD_Updater2
             this.deviceView.Location = new System.Drawing.Point(13, 43);
             this.deviceView.MultiSelect = false;
             this.deviceView.Name = "deviceView";
-            this.deviceView.Size = new System.Drawing.Size(404, 271);
+            this.deviceView.Size = new System.Drawing.Size(555, 287);
             this.deviceView.TabIndex = 37;
             this.deviceView.UseCompatibleStateImageBehavior = false;
             this.deviceView.View = System.Windows.Forms.View.Details;
             this.deviceView.SelectedIndexChanged += new System.EventHandler(this.deviceView_SelectedIndexChanged);
             // 
+            // columnDevId
+            // 
+            this.columnDevId.Text = "Device ID";
+            // 
             // columnCOM
             // 
             this.columnCOM.Text = "COM";
+            // 
+            // columnWifiIP
+            // 
+            this.columnWifiIP.Text = "WiFi IP";
+            this.columnWifiIP.Width = 90;
             // 
             // columnType
             // 
@@ -215,7 +228,7 @@ namespace ZeDMD_Updater2
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.radioWTcp);
             this.groupBox1.Controls.Add(this.radioWUdp);
-            this.groupBox1.Location = new System.Drawing.Point(647, 43);
+            this.groupBox1.Location = new System.Drawing.Point(804, 43);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(188, 175);
             this.groupBox1.TabIndex = 38;
@@ -313,7 +326,7 @@ namespace ZeDMD_Updater2
             // 
             this.radioUsb.AutoSize = true;
             this.radioUsb.Checked = true;
-            this.radioUsb.Location = new System.Drawing.Point(656, 224);
+            this.radioUsb.Location = new System.Drawing.Point(813, 224);
             this.radioUsb.Name = "radioUsb";
             this.radioUsb.Size = new System.Drawing.Size(47, 17);
             this.radioUsb.TabIndex = 40;
@@ -325,7 +338,7 @@ namespace ZeDMD_Updater2
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(653, 244);
+            this.label4.Location = new System.Drawing.Point(810, 244);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(101, 13);
             this.label4.TabIndex = 8;
@@ -338,7 +351,7 @@ namespace ZeDMD_Updater2
             0,
             0,
             0});
-            this.numericUPSize.Location = new System.Drawing.Point(751, 241);
+            this.numericUPSize.Location = new System.Drawing.Point(908, 241);
             this.numericUPSize.Maximum = new decimal(new int[] {
             1920,
             0,
@@ -363,7 +376,7 @@ namespace ZeDMD_Updater2
             // buttonSNParameters
             // 
             this.buttonSNParameters.Enabled = false;
-            this.buttonSNParameters.Location = new System.Drawing.Point(712, 336);
+            this.buttonSNParameters.Location = new System.Drawing.Point(869, 336);
             this.buttonSNParameters.Name = "buttonSNParameters";
             this.buttonSNParameters.Size = new System.Drawing.Size(172, 23);
             this.buttonSNParameters.TabIndex = 41;
@@ -374,7 +387,7 @@ namespace ZeDMD_Updater2
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(653, 287);
+            this.label5.Location = new System.Drawing.Point(810, 287);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(63, 13);
             this.label5.TabIndex = 42;
@@ -382,7 +395,7 @@ namespace ZeDMD_Updater2
             // 
             // numericROrder
             // 
-            this.numericROrder.Location = new System.Drawing.Point(656, 303);
+            this.numericROrder.Location = new System.Drawing.Point(813, 303);
             this.numericROrder.Maximum = new decimal(new int[] {
             5,
             0,
@@ -396,7 +409,7 @@ namespace ZeDMD_Updater2
             // 
             // numericBrightness
             // 
-            this.numericBrightness.Location = new System.Drawing.Point(770, 303);
+            this.numericBrightness.Location = new System.Drawing.Point(927, 303);
             this.numericBrightness.Maximum = new decimal(new int[] {
             15,
             0,
@@ -421,7 +434,7 @@ namespace ZeDMD_Updater2
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(767, 287);
+            this.label6.Location = new System.Drawing.Point(924, 287);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(62, 13);
             this.label6.TabIndex = 44;
@@ -429,7 +442,7 @@ namespace ZeDMD_Updater2
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(647, 12);
+            this.textBox1.Location = new System.Drawing.Point(804, 12);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(299, 20);
@@ -497,7 +510,7 @@ namespace ZeDMD_Updater2
             // 
             // numericPCPhase
             // 
-            this.numericPCPhase.Location = new System.Drawing.Point(15, 89);
+            this.numericPCPhase.Location = new System.Drawing.Point(15, 93);
             this.numericPCPhase.Maximum = new decimal(new int[] {
             1,
             0,
@@ -512,7 +525,7 @@ namespace ZeDMD_Updater2
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(12, 73);
+            this.label8.Location = new System.Drawing.Point(12, 77);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(72, 13);
             this.label8.TabIndex = 52;
@@ -520,7 +533,7 @@ namespace ZeDMD_Updater2
             // 
             // numericPLBlanking
             // 
-            this.numericPLBlanking.Location = new System.Drawing.Point(15, 186);
+            this.numericPLBlanking.Location = new System.Drawing.Point(15, 194);
             this.numericPLBlanking.Maximum = new decimal(new int[] {
             4,
             0,
@@ -546,7 +559,7 @@ namespace ZeDMD_Updater2
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(12, 170);
+            this.label9.Location = new System.Drawing.Point(12, 178);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(83, 13);
             this.label9.TabIndex = 54;
@@ -555,7 +568,7 @@ namespace ZeDMD_Updater2
             // label10
             // 
             this.label10.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label10.Location = new System.Drawing.Point(647, 274);
+            this.label10.Location = new System.Drawing.Point(804, 274);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(188, 2);
             this.label10.TabIndex = 55;
@@ -573,9 +586,9 @@ namespace ZeDMD_Updater2
             this.groupBox2.Controls.Add(this.numericPDriver);
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.label7);
-            this.groupBox2.Location = new System.Drawing.Point(841, 43);
+            this.groupBox2.Location = new System.Drawing.Point(998, 43);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(105, 270);
+            this.groupBox2.Size = new System.Drawing.Size(105, 287);
             this.groupBox2.TabIndex = 56;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Panel";
@@ -587,7 +600,7 @@ namespace ZeDMD_Updater2
             0,
             0,
             0});
-            this.numericPMRRate.Location = new System.Drawing.Point(15, 235);
+            this.numericPMRRate.Location = new System.Drawing.Point(15, 248);
             this.numericPMRRate.Maximum = new decimal(new int[] {
             120,
             0,
@@ -612,7 +625,7 @@ namespace ZeDMD_Updater2
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(12, 219);
+            this.label12.Location = new System.Drawing.Point(12, 232);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(86, 13);
             this.label12.TabIndex = 56;
@@ -625,7 +638,7 @@ namespace ZeDMD_Updater2
             0,
             0,
             0});
-            this.numericPISpeed.Location = new System.Drawing.Point(15, 138);
+            this.numericPISpeed.Location = new System.Drawing.Point(15, 141);
             this.numericPISpeed.Maximum = new decimal(new int[] {
             20,
             0,
@@ -651,7 +664,7 @@ namespace ZeDMD_Updater2
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(12, 122);
+            this.label11.Location = new System.Drawing.Point(12, 125);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(61, 13);
             this.label11.TabIndex = 54;
@@ -664,7 +677,7 @@ namespace ZeDMD_Updater2
             this.groupBox3.Controls.Add(this.radio25664);
             this.groupBox3.Controls.Add(this.radio12832);
             this.groupBox3.Controls.Add(this.radio12864);
-            this.groupBox3.Location = new System.Drawing.Point(431, 271);
+            this.groupBox3.Location = new System.Drawing.Point(588, 271);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(200, 59);
             this.groupBox3.TabIndex = 57;
@@ -703,7 +716,7 @@ namespace ZeDMD_Updater2
             // buttonLTest
             // 
             this.buttonLTest.Enabled = false;
-            this.buttonLTest.Location = new System.Drawing.Point(226, 336);
+            this.buttonLTest.Location = new System.Drawing.Point(381, 336);
             this.buttonLTest.Name = "buttonLTest";
             this.buttonLTest.Size = new System.Drawing.Size(172, 23);
             this.buttonLTest.TabIndex = 34;
@@ -727,14 +740,14 @@ namespace ZeDMD_Updater2
             this.textDescription.Multiline = true;
             this.textDescription.Name = "textDescription";
             this.textDescription.ReadOnly = true;
-            this.textDescription.Size = new System.Drawing.Size(962, 36);
+            this.textDescription.Size = new System.Drawing.Size(1123, 36);
             this.textDescription.TabIndex = 59;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(960, 399);
+            this.ClientSize = new System.Drawing.Size(1119, 399);
             this.Controls.Add(this.textDescription);
             this.Controls.Add(this.buttonRescan);
             this.Controls.Add(this.groupBox3);
@@ -829,6 +842,8 @@ namespace ZeDMD_Updater2
         public System.Windows.Forms.ColumnHeader columnWidth;
         public System.Windows.Forms.ColumnHeader columnHeight;
         public System.Windows.Forms.ColumnHeader columnLilygo;
+        public System.Windows.Forms.ColumnHeader columnDevId;
+        public System.Windows.Forms.ColumnHeader columnWifiIP;
         public Button buttonLTest;
         public Button buttonRescan;
         private Label label13;

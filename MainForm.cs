@@ -6,8 +6,10 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Windows.Forms;
 using ZeDMD_Updater2.Resources;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
 namespace ZeDMD_Updater2
@@ -16,10 +18,24 @@ namespace ZeDMD_Updater2
     {
         public readonly int Major_Version = 2;
         public readonly int Minor_Version = 0;
-        public readonly int Patch_Version = 0;
+        public readonly int Patch_Version = 1;
         public MainForm()
         {
             InitializeComponent();
+
+
+
+
+
+
+            Thread.Sleep(5000);
+
+
+
+
+
+
+
             AttachMouseEnterEvents(Controls);
             Text = "ZeDMD Updater v" + Major_Version.ToString() + "." + Minor_Version.ToString() + "." + Patch_Version.ToString();
             MouseEnter += (s, e) => textDescription.Text = "";
@@ -30,7 +46,8 @@ namespace ZeDMD_Updater2
             };
             deviceView.OwnerDraw = true; // Enable custom drawing
             deviceView.DrawColumnHeader += deviceView_DrawColumnHeader;
-            deviceView.DrawSubItem += deviceView_DrawSubItem; Enabled = false;
+            deviceView.DrawSubItem += deviceView_DrawSubItem;
+            Enabled = false;
             deviceView.MouseDoubleClick += deviceView_MouseDoubleClick;
             string latestVersion = "";
             WaitForm waitForm = new WaitForm();
@@ -117,11 +134,11 @@ namespace ZeDMD_Updater2
         {
             e.DrawDefault = true;
         }
-
         // Custom subitem coloring
         private void deviceView_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
-            if (e.ColumnIndex == 4 && e.Item.SubItems[4].Text.StartsWith("*"))
+            System.Windows.Forms.ListView.ColumnHeaderCollection lvchc = deviceView.Columns;
+            if (e.ColumnIndex == lvchc.IndexOf(columnVersion) && e.Item.SubItems[lvchc.IndexOf(columnVersion)].Text.StartsWith("*"))
             {
                 e.Graphics.DrawString(e.SubItem.Text, deviceView.Font, Brushes.Red, e.Bounds);
             }
@@ -239,21 +256,10 @@ namespace ZeDMD_Updater2
                 string filePath = openFileDialog.FileName;
                 Esp32Device zeddev = Esp32Devices.esp32Devices[deviceView.SelectedItems[0].Index];
                 flashed = FlashAndConfig.FlashEsp32(zeddev, filePath);
-                
-                
-                
-                
-                //if (flashed) CalcAndSetParameters();
-
-
-
-
-
             }
             Enabled = true;
             if (flashed)
             {
-                //MessageBox.Show("Configure your ZeDMD with the menu, exit the menu, then click \"OK\"");
                 UpdateZeDMDList();
             }
         }
@@ -360,6 +366,7 @@ namespace ZeDMD_Updater2
                     }
                     else ed.isS3 = true;
                     Esp32Devices.PopulateESP(this);
+                    deviceView.SelectedIndices.Add(rowIndex);
                 }
                 else if (rowIndex >= 0 && rowIndex < Esp32Devices.esp32Devices.Count && columnIndex == 3)
                 {
@@ -371,6 +378,7 @@ namespace ZeDMD_Updater2
                         ed.isS3 = true;
                     }
                     Esp32Devices.PopulateESP(this);
+                    deviceView.SelectedIndices.Add(rowIndex);
                 }
             }
         }

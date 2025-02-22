@@ -12,6 +12,7 @@ namespace ZeDMD_Updater2
     internal static class Esp32Devices
     {
         public static List<Esp32Device> esp32Devices = new List<Esp32Device>();
+        public static Esp32Device wifiDevice = new Esp32Device(-1, false, false, false);
         public static int[] I2SallowedSpeed = { 8, 16, 20 };
         public static void FillEsp32Values(int deviceId, MainForm form)
         {
@@ -119,7 +120,7 @@ namespace ZeDMD_Updater2
             Thread.Sleep(500);
             esp32Devices.Clear();
             GetPortNames();
-            Esp32Device.CheckZeDMDs(ref esp32Devices);
+            Esp32Device.CheckZeDMDs(ref esp32Devices,ref wifiDevice);
             //zdc.Open(ref ZeDMDW, ref ZeDMDH, out nZeDMDCOMs, ref ZeDMDCOMs, ref majVersion, ref minVersion, ref patVersion, ref brightness, ref RGBorder);
         }
         public static void PopulateESP(MainForm form)
@@ -140,6 +141,21 @@ namespace ZeDMD_Updater2
                 item.SubItems[lvchc.IndexOf(form.columnS3)].Text = tstr;
                 if (device.isLilygo) tstr = "Yes"; else tstr = "No";
                 item.SubItems[lvchc.IndexOf(form.columnLilygo)].Text = tstr;
+                item.SubItems[lvchc.IndexOf(form.columnDevId)].Text = ((UInt16)device.ZeID).ToString("X4");
+
+
+
+
+
+
+                //if (device.isWifi) item.SubItems[lvchc.IndexOf(form.columnWifiIP)].Text = device.WifiIp;
+                //else
+                
+                
+                
+                
+                
+                item.SubItems[lvchc.IndexOf(form.columnWifiIP)].Text = "-----------";
                 if (device.isZeDMD)
                 {
                     if (device.MajVersion != InternetFirmwares.avmajVersion || device.MinVersion != InternetFirmwares.avminVersion ||

@@ -87,30 +87,6 @@ namespace ZeDMD_Updater2
         public static string GetAvailableVersions()
         {
 
-
-
-
-
-
-
-
-
-
-
-            //return "0.0.0";
-
-
-
-
-
-
-
-
-
-
-
-
-
             string zipFileUrl = "https://github.com/PPUC/ZeDMD/releases/latest/download/ZeDMD-128x32.zip";
             string versionFileName = "version.txt";
 
