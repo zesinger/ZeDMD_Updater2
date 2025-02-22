@@ -28,7 +28,7 @@ namespace ZeDMD_Updater2
 
 
 
-            Thread.Sleep(5000);
+            //Thread.Sleep(5000);
 
 
 
@@ -103,7 +103,9 @@ namespace ZeDMD_Updater2
         }
         private void UpdateZeDMDList()
         {
-            int comId = Esp32Devices.esp32Devices[deviceView.SelectedItems[0].Index].ComId;
+            int comId = -1;
+            if (deviceView.SelectedItems.Count > 0)
+                comId = Esp32Devices.esp32Devices[deviceView.SelectedItems[0].Index].ComId;
             Enabled = false;
             WaitForm waitForm = new WaitForm();
             waitForm.mainText.Text = "Please wait while updating the available devices...";
