@@ -314,17 +314,6 @@ namespace ZeDMD_Updater2
                                 System.IO.File.WriteAllBytes(filePath, firmwareData);
                                 flashed = FlashAndConfig.FlashEsp32(zeddev, filePath);
                                 System.IO.File.Delete(filePath);
-
-
-
-
-
-                                //if (flashed) CalcAndSetParameters();
-
-
-
-
-
                             }
                             firmwareStream.Close();
                         }
