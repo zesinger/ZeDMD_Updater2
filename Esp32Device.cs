@@ -103,6 +103,7 @@ namespace ZeDMD_Updater2
                         wifiDevice.isUnknown = true;
                         wifiDevice.ZeID = -1;
                     }
+
                     // switch this device to USB
                     ZeDMD_SetTransport(_pZeDMD, 0);
                     ZeDMD_SaveSettings(_pZeDMD);
@@ -139,15 +140,18 @@ namespace ZeDMD_Updater2
                     device.isZeDMD = true;
                     GetZeDMDValues(device, _pZeDMD);
                     // look if the device ID returned is the same than the wifi one
+                    ZeDMD_Close(_pZeDMD);
                     if (device.ZeID == wifiDevice.ZeID)
                     {
                         // if true, this is the same device, and so we can set the COM# of the wifiDevice
                         wifiDevice.ComId = device.ComId;
                         wifif = i;
-                        // switch it back to wifi with the transport mode it had before
-                        ZeDMD_SetTransport(_pZeDMD, wifitransport);
-                        ZeDMD_SaveSettings(_pZeDMD);
-                        ZeDMD_Reset(_pZeDMD);
+                        ZeDMD_SetDevice(_pZeDMD, comport);
+                        string log2 = "";
+                        FlashAndConfig.SetZeDmdParameters(device, device.Brightness, device.RgbOrder, device.PanelClockPhase,
+                            device.PanelDriver, device.PanelI2SSpeed, device.PanelLatchBlanking, device.PanelMinRefreshRate, wifitransport,
+                            device.UdpDelay, device.UsbPacketSize, "", "", device.YOffset, ref log2);
+                        logBox += log2;
                     }
                     ZeDMD_Close(_pZeDMD);
                 }

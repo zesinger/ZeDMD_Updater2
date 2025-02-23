@@ -92,6 +92,7 @@ namespace ZeDMD_Updater2
                     //Esp32Device.ZeDMD_SetWiFiPort(_pZeDMD, 3333);
                 }
                 ZeDMD_SaveSettings(_pZeDMD);
+                ZeDMD_Reset(_pZeDMD);
                 ZeDMD_Close(_pZeDMD);
                 device.Brightness = brightness;
                 device.RgbOrder = rgborder;
