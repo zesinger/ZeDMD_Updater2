@@ -85,6 +85,8 @@ namespace ZeDMD_Updater2
             this.buttonLTest = new System.Windows.Forms.Button();
             this.buttonRescan = new System.Windows.Forms.Button();
             this.textDescription = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textLog = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUPSize)).BeginInit();
@@ -740,14 +742,38 @@ namespace ZeDMD_Updater2
             this.textDescription.Multiline = true;
             this.textDescription.Name = "textDescription";
             this.textDescription.ReadOnly = true;
-            this.textDescription.Size = new System.Drawing.Size(1123, 36);
+            this.textDescription.Size = new System.Drawing.Size(1374, 36);
             this.textDescription.TabIndex = 59;
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(1119, 12);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.ReadOnly = true;
+            this.textBox2.Size = new System.Drawing.Size(242, 20);
+            this.textBox2.TabIndex = 60;
+            this.textBox2.Text = "Log :";
+            this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textLog
+            // 
+            this.textLog.BackColor = System.Drawing.SystemColors.Info;
+            this.textLog.ForeColor = System.Drawing.SystemColors.InfoText;
+            this.textLog.Location = new System.Drawing.Point(1119, 46);
+            this.textLog.Multiline = true;
+            this.textLog.Name = "textLog";
+            this.textLog.ReadOnly = true;
+            this.textLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textLog.Size = new System.Drawing.Size(242, 313);
+            this.textLog.TabIndex = 61;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1119, 399);
+            this.ClientSize = new System.Drawing.Size(1373, 399);
+            this.Controls.Add(this.textLog);
+            this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textDescription);
             this.Controls.Add(this.buttonRescan);
             this.Controls.Add(this.groupBox3);
@@ -849,6 +875,8 @@ namespace ZeDMD_Updater2
         private Label label13;
         private NumericUpDown numericOY;
         private TextBox textDescription;
+        public TextBox textBox2;
+        public TextBox textLog;
     }
 }
 

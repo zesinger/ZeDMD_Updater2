@@ -17,6 +17,7 @@ namespace ZeDMD_Updater2
         public readonly int Major_Version = 2;
         public readonly int Minor_Version = 0;
         public readonly int Patch_Version = 1;
+
         public MainForm()
         {
             InitializeComponent();
@@ -38,13 +39,15 @@ namespace ZeDMD_Updater2
             WaitForm waitForm = new WaitForm();
             waitForm.mainText.Text = "Please wait while listing the available firmwares and devices...\r\n Any ZeDMD connected must NOT be in menu mode!";
             BackgroundWorker worker = new BackgroundWorker();
+            string retlog = "";
             worker.DoWork += (s, ev) =>
             {
                 latestVersion = InternetFirmwares.GetAvailableVersions();
-                Esp32Devices.GetAvailableDevices();
+                retlog = Esp32Devices.GetAvailableDevices(this);
             };
             worker.RunWorkerCompleted += (s, ev) =>
             {
+                textLog.Text = retlog;
                 LatestVersion.Text = "Latest version available: " + latestVersion;
                 InternetFirmwares.PopulateVersions(this);
                 Esp32Devices.PopulateESP(this);
@@ -94,12 +97,14 @@ namespace ZeDMD_Updater2
             WaitForm waitForm = new WaitForm();
             waitForm.mainText.Text = "Please wait while updating the available devices...";
             BackgroundWorker worker = new BackgroundWorker();
+            string retLog = "";
             worker.DoWork += (s, ev) =>
             {
-                Esp32Devices.GetAvailableDevices();
+                retLog = Esp32Devices.GetAvailableDevices(this);
             };
             worker.RunWorkerCompleted += (s, ev) =>
             {
+                textLog.Text = retLog;
                 Esp32Devices.PopulateESP(this);
                 Enabled = true;
                 waitForm.Close();
@@ -371,7 +376,6 @@ namespace ZeDMD_Updater2
         private void buttonRescan_Click(object sender, EventArgs e)
         {
             UpdateZeDMDList();
-
         }
 
         private void CalcAndSetParameters()

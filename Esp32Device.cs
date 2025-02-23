@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace ZeDMD_Updater2
 {
@@ -66,13 +67,24 @@ namespace ZeDMD_Updater2
             device.YOffset = ZeDMD_GetYOffset(_pZeDMD);
             device.ZeID = ZeDMD_GetId(_pZeDMD);
         }
-        public static void CheckZeDMDs(ref List<Esp32Device> esp32Devices, ref Esp32Device wifiDevice)
+        private static string logBox;
+        public static void LogHandler(string format, IntPtr args, IntPtr pUserData)
         {
+            logBox += Marshal.PtrToStringAnsi(ZeDMD_FormatLogMessage(format, args, pUserData)) + "\r\n";
+        }
+        public static string CheckZeDMDs(MainForm form, ref List<Esp32Device> esp32Devices, ref Esp32Device wifiDevice)
+        {
+            logBox = "=== WiFi Test ===\r\n";
             // create an instance
+            GCHandle handle;
             IntPtr _pZeDMD = IntPtr.Zero;
             _pZeDMD = ZeDMD_GetInstance();
+            ZeDMD_LogCallback callbackDelegate = new ZeDMD_LogCallback(LogHandler);
+            // Keep a reference to the delegate to prevent GC from collecting it
+            handle = GCHandle.Alloc(callbackDelegate);
+            ZeDMD_SetLogCallback(_pZeDMD, callbackDelegate, IntPtr.Zero);
             // check if a ZeDMD wifi is available
-            byte wifitransport=2;
+            byte wifitransport = 2;
             if (ZeDMD_OpenDefaultWiFi(_pZeDMD))
             {
                 // if so, get all the parameters
@@ -81,18 +93,37 @@ namespace ZeDMD_Updater2
                 wifiDevice.isUnknown = false;
                 GetZeDMDValues(wifiDevice, _pZeDMD);
                 wifiDevice.WifiIp = Marshal.PtrToStringAnsi(ZeDMD_GetIp(_pZeDMD));
-                // keep the transport mode for later
-                wifitransport = ZeDMD_GetTransport(_pZeDMD);
-                // switch this device to USB
-                ZeDMD_SetTransport(_pZeDMD, 0);
-                ZeDMD_SaveSettings(_pZeDMD);
-                ZeDMD_Reset(_pZeDMD);
+                if (wifiDevice.WifiIp != "")
+                {
+                    // keep the transport mode for later
+                    wifitransport = ZeDMD_GetTransport(_pZeDMD);
+                    if (wifitransport != 1 && wifitransport != 2)
+                    {
+                        MessageBox.Show("The WiFi ZeDMD connected has an old firmware, you need to check manually which COM # is corresponding and flash it, your WiFi ZeDMD will be ignored.");
+                        wifiDevice.isUnknown = true;
+                        wifiDevice.ZeID = -1;
+                    }
+                    // switch this device to USB
+                    ZeDMD_SetTransport(_pZeDMD, 0);
+                    ZeDMD_SaveSettings(_pZeDMD);
+                    ZeDMD_Reset(_pZeDMD);
+                }
+                else
+                {
+                    wifiDevice.isUnknown = true;
+                    logBox += "No WiFi device found\r\n";
+                }
                 ZeDMD_Close(_pZeDMD);
             }
             // isUnknown==true if wifiDevice does not exist
-            else wifiDevice.isUnknown = true;
+            else
+            {
+                wifiDevice.isUnknown = true;
+                logBox += "No WiFi device found\r\n";
+            }
             // then look for USB ZeDMDs, esp32Devices contains an empty Esp32Device for all the COM#
             // declared in Windows, except their COM#
+            logBox += "\r\n=== USB Test ===\r\n";
             int wifif = -1;
             for (int i = 0; i < esp32Devices.Count; i++)
             {
@@ -120,52 +151,23 @@ namespace ZeDMD_Updater2
                     }
                     ZeDMD_Close(_pZeDMD);
                 }
+                logBox += "\r\n";
             }
             // if we have found the wifi device in the USB devices, we can remove it from the USB list
             if (wifif >= 0) esp32Devices.RemoveAt(wifif);
+            return logBox;
         }
-        /*public static void CheckUZeDMDs(IntPtr _pZeDMD, ref List<Esp32Device> esp32Devices, Esp32Device wifiDevice)
+        public static string LedTest(MainForm form)
         {
-            int comwifi = -1;
-            if (!wifiDevice.isUnknown) comwifi = wifiDevice.ComId;
-            // we remove the device corresponding to the wifi device
-            foreach (var device in esp32Devices)
-            {
-                if (device.ComId == comwifi)
-                {
-                    esp32Devices.Remove(device);
-                    break;
-                }
-            }
-            // then we can get the details of the remaining ones
-            foreach (var device in esp32Devices)
-            {
-                string comport = @"COM" + device.ComId.ToString();
-                ZeDMD_SetDevice(_pZeDMD, comport);
-                if (ZeDMD_Open(_pZeDMD))
-                {
-                    device.isWifi = false;
-                    device.isUnknown = false;
-                    device.isZeDMD = true;
-                    GetZeDMDValues(device, _pZeDMD);
-
-                    ZeDMD_Close(_pZeDMD);
-                }
-            }
-        }
-        public static void CheckZeDMDs(ref List<Esp32Device> esp32Devices, ref Esp32Device wifiDevice)
-        {
+            logBox = "=== Led Test ===\r\n";
+            // create an instance
+            GCHandle handle;
             IntPtr _pZeDMD = IntPtr.Zero;
             _pZeDMD = ZeDMD_GetInstance();
-            // first check if we have a wifi device
-            CheckWZeDMD(_pZeDMD, ref wifiDevice, esp32Devices);
-            // then check for all the USB ones
-            CheckUZeDMDs(_pZeDMD, ref esp32Devices, wifiDevice);
-        }*/
-        public static void LedTest(MainForm form)
-        {
-            IntPtr _pZeDMD = IntPtr.Zero;
-            _pZeDMD = ZeDMD_GetInstance();
+            ZeDMD_LogCallback callbackDelegate = new ZeDMD_LogCallback(LogHandler);
+            // Keep a reference to the delegate to prevent GC from collecting it
+            handle = GCHandle.Alloc(callbackDelegate);
+            ZeDMD_SetLogCallback(_pZeDMD, callbackDelegate, IntPtr.Zero);
             Esp32Device ed = Esp32Devices.WhichDevice(form);
             bool openOK = false;
             if (ed.isWifi) openOK = ZeDMD_OpenDefaultWiFi(_pZeDMD);
@@ -180,6 +182,8 @@ namespace ZeDMD_Updater2
                 ZeDMD_LedTest(_pZeDMD);
                 ZeDMD_Close(_pZeDMD);
             }
+            else logBox += "Unable to connect to the device\r\n";
+            return logBox;
         }
 
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -311,5 +315,14 @@ namespace ZeDMD_Updater2
         [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         // C format: extern ZEDMDAPI void ZeDMD_LedTest(ZeDMD* pZeDMD);
         private static extern void ZeDMD_LedTest(IntPtr pZeDMD);
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        // C format: typedef void(ZEDMDCALLBACK* ZeDMD_LogCallback)(const char* format, va_list args, const void* userData);
+        public delegate void ZeDMD_LogCallback(string format, IntPtr args, IntPtr pUserData);
+        [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        // C format: extern ZEDMDAPI void ZeDMD_SetLogCallback(ZeDMD* pZeDMD, ZeDMD_LogCallback callback, const void* pUserData);
+        public static extern void ZeDMD_SetLogCallback(IntPtr pZeDMD, ZeDMD_LogCallback callback, IntPtr pUserData);
+        [DllImport("zedmd64.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        // C format: extern ZEDMDAPI const char* ZeDMD_FormatLogMessage(const char* format, va_list args, const void* pUserData);
+        public static extern IntPtr ZeDMD_FormatLogMessage(string format, IntPtr args, IntPtr pUserData);
     }
 }

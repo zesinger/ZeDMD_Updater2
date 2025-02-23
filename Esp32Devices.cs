@@ -123,12 +123,12 @@ namespace ZeDMD_Updater2
         {
             return (value < min) ? min : (value > max) ? max : value;
         }
-        public static void GetAvailableDevices()
+        public static string GetAvailableDevices(MainForm form)
         {
             Thread.Sleep(500);
             esp32Devices.Clear();
             GetPortNames();
-            Esp32Device.CheckZeDMDs(ref esp32Devices,ref wifiDevice);
+            return Esp32Device.CheckZeDMDs(form, ref esp32Devices,ref wifiDevice);
             //zdc.Open(ref ZeDMDW, ref ZeDMDH, out nZeDMDCOMs, ref ZeDMDCOMs, ref majVersion, ref minVersion, ref patVersion, ref brightness, ref RGBorder);
         }
         public static void PopulateESP(MainForm form)
