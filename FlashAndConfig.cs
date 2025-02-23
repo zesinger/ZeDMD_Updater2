@@ -53,17 +53,20 @@ namespace ZeDMD_Updater2
         }
         public static bool SetZeDmdParameters(Esp32Device device, int brightness, int rgborder, int panelclockphase, int paneldriver,
             int paneli2sspeed, int panellatchblanking, int panelminrefresh, int transport, int udpdelay, int usbpackagesize,
-            string wifissid, string wifipassword, int yoffset, ref string logres)
+            string wifissid, string wifipassword, int yoffset, ref string logres, bool muted)
         {
-            logBox = "=== Setting ZeDMD Parameters ===\r\n";
-            // create an instance
-            GCHandle handle;
             IntPtr _pZeDMD = IntPtr.Zero;
             _pZeDMD = ZeDMD_GetInstance();
+            GCHandle handle;
             ZeDMD_LogCallback callbackDelegate = new ZeDMD_LogCallback(LogHandler);
-            // Keep a reference to the delegate to prevent GC from collecting it
-            handle = GCHandle.Alloc(callbackDelegate);
-            ZeDMD_SetLogCallback(_pZeDMD, callbackDelegate, IntPtr.Zero);
+            if (!muted)
+            {
+                logBox = "=== Setting ZeDMD Parameters ===\r\n";
+                // create an instance
+                // Keep a reference to the delegate to prevent GC from collecting it
+                handle = GCHandle.Alloc(callbackDelegate);
+                ZeDMD_SetLogCallback(_pZeDMD, callbackDelegate, IntPtr.Zero);
+            }
             bool openOK = false;
             if (device.isWifi) openOK = ZeDMD_OpenDefaultWiFi(_pZeDMD);
             else

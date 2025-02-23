@@ -15,8 +15,8 @@ namespace ZeDMD_Updater2
     public partial class MainForm : Form
     {
         public readonly int Major_Version = 2;
-        public readonly int Minor_Version = 0;
-        public readonly int Patch_Version = 1;
+        public readonly int Minor_Version = 1;
+        public readonly int Patch_Version = 0;
 
         public MainForm()
         {
@@ -396,7 +396,7 @@ namespace ZeDMD_Updater2
                 FlashAndConfig.SetZeDmdParameters(zd,
                     (int)numericBrightness.Value, (int)numericROrder.Value, (int)numericPCPhase.Value,
                     (int)numericPDriver.Value, (int)numericPISpeed.Value, (int)numericPLBlanking.Value, (int)numericPMRRate.Value,
-                    transport, (int)numericUDelay.Value, (int)numericUPSize.Value, textSsid.Text, textPassword.Text, (int)numericOY.Value, ref logRes);
+                    transport, (int)numericUDelay.Value, (int)numericUPSize.Value, textSsid.Text, textPassword.Text, (int)numericOY.Value, ref logRes, false);
             };
             worker.RunWorkerCompleted += (s, ev) =>
             {
