@@ -390,15 +390,17 @@ namespace ZeDMD_Updater2
 
             BackgroundWorker worker = new BackgroundWorker();
             Esp32Device zd = Esp32Devices.WhichDevice(this);
+            string logRes = "";
             worker.DoWork += (s, ev) =>
             {
                 FlashAndConfig.SetZeDmdParameters(zd,
                     (int)numericBrightness.Value, (int)numericROrder.Value, (int)numericPCPhase.Value,
                     (int)numericPDriver.Value, (int)numericPISpeed.Value, (int)numericPLBlanking.Value, (int)numericPMRRate.Value,
-                    transport, (int)numericUDelay.Value, (int)numericUPSize.Value, textSsid.Text, textPassword.Text, (int)numericOY.Value);
+                    transport, (int)numericUDelay.Value, (int)numericUPSize.Value, textSsid.Text, textPassword.Text, (int)numericOY.Value, ref logRes);
             };
             worker.RunWorkerCompleted += (s, ev) =>
             {
+                textLog.Text = logRes;
                 Esp32Devices.FillEsp32Values(deviceView.SelectedItems[0].Index, this);
                 Enabled = true;
                 waitForm.Close();

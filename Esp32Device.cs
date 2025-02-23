@@ -68,7 +68,7 @@ namespace ZeDMD_Updater2
             device.ZeID = ZeDMD_GetId(_pZeDMD);
         }
         private static string logBox;
-        public static void LogHandler(string format, IntPtr args, IntPtr pUserData)
+        private static void LogHandler(string format, IntPtr args, IntPtr pUserData)
         {
             logBox += Marshal.PtrToStringAnsi(ZeDMD_FormatLogMessage(format, args, pUserData)) + "\r\n";
         }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using static ZeDMD_Updater2.Esp32Device;
 
 namespace ZeDMD_Updater2
 {
@@ -44,42 +46,53 @@ namespace ZeDMD_Updater2
                 return true;
             }
         }
+        private static string logBox;
+        private static void LogHandler(string format, IntPtr args, IntPtr pUserData)
+        {
+            logBox += Marshal.PtrToStringAnsi(Esp32Device.ZeDMD_FormatLogMessage(format, args, pUserData)) + "\r\n";
+        }
         public static bool SetZeDmdParameters(Esp32Device device, int brightness, int rgborder, int panelclockphase, int paneldriver,
             int paneli2sspeed, int panellatchblanking, int panelminrefresh, int transport, int udpdelay, int usbpackagesize,
-            string wifissid, string wifipassword, int yoffset)
+            string wifissid, string wifipassword, int yoffset, ref string logres)
         {
-            // using libzedmd api
+            logBox = "=== Setting ZeDMD Parameters ===\r\n";
+            // create an instance
+            GCHandle handle;
             IntPtr _pZeDMD = IntPtr.Zero;
-            _pZeDMD = Esp32Device.ZeDMD_GetInstance();
+            _pZeDMD = ZeDMD_GetInstance();
+            ZeDMD_LogCallback callbackDelegate = new ZeDMD_LogCallback(LogHandler);
+            // Keep a reference to the delegate to prevent GC from collecting it
+            handle = GCHandle.Alloc(callbackDelegate);
+            ZeDMD_SetLogCallback(_pZeDMD, callbackDelegate, IntPtr.Zero);
             bool openOK = false;
-            if (device.isWifi) openOK=Esp32Device.ZeDMD_OpenDefaultWiFi(_pZeDMD);
+            if (device.isWifi) openOK = ZeDMD_OpenDefaultWiFi(_pZeDMD);
             else
             {
                 string comport = @"COM" + device.ComId.ToString();
-                Esp32Device.ZeDMD_SetDevice(_pZeDMD, comport);
-                openOK=Esp32Device.ZeDMD_Open(_pZeDMD);
+                ZeDMD_SetDevice(_pZeDMD, comport);
+                openOK = ZeDMD_Open(_pZeDMD);
             }
             if (openOK)
             {
-                Esp32Device.ZeDMD_SetBrightness(_pZeDMD, (byte)brightness);
-                Esp32Device.ZeDMD_SetRGBOrder(_pZeDMD, (byte)rgborder);
-                Esp32Device.ZeDMD_SetPanelClockPhase(_pZeDMD, (byte)panelclockphase);
-                Esp32Device.ZeDMD_SetPanelDriver(_pZeDMD, (byte)paneldriver);
-                Esp32Device.ZeDMD_SetPanelI2sSpeed(_pZeDMD, (byte)paneli2sspeed);
-                Esp32Device.ZeDMD_SetPanelLatchBlanking(_pZeDMD, (byte)panellatchblanking);
-                Esp32Device.ZeDMD_SetPanelMinRefreshRate(_pZeDMD, (byte)panelminrefresh);
-                Esp32Device.ZeDMD_SetTransport(_pZeDMD, (byte)transport);
-                Esp32Device.ZeDMD_SetUdpDelay(_pZeDMD, (byte)udpdelay);
-                Esp32Device.ZeDMD_SetUsbPackageSize(_pZeDMD, (ushort)usbpackagesize);
-                Esp32Device.ZeDMD_SetYOffset(_pZeDMD, (byte)yoffset);
+                ZeDMD_SetBrightness(_pZeDMD, (byte)brightness);
+                ZeDMD_SetRGBOrder(_pZeDMD, (byte)rgborder);
+                ZeDMD_SetPanelClockPhase(_pZeDMD, (byte)panelclockphase);
+                ZeDMD_SetPanelDriver(_pZeDMD, (byte)paneldriver);
+                ZeDMD_SetPanelI2sSpeed(_pZeDMD, (byte)paneli2sspeed);
+                ZeDMD_SetPanelLatchBlanking(_pZeDMD, (byte)panellatchblanking);
+                ZeDMD_SetPanelMinRefreshRate(_pZeDMD, (byte)panelminrefresh);
+                ZeDMD_SetTransport(_pZeDMD, (byte)transport);
+                ZeDMD_SetUdpDelay(_pZeDMD, (byte)udpdelay);
+                ZeDMD_SetUsbPackageSize(_pZeDMD, (ushort)usbpackagesize);
+                ZeDMD_SetYOffset(_pZeDMD, (byte)yoffset);
                 if (wifissid != "")
                 {
-                    Esp32Device.ZeDMD_SetWiFiSSID(_pZeDMD, wifissid);
-                    Esp32Device.ZeDMD_SetWiFiPassword(_pZeDMD, wifipassword);
+                    ZeDMD_SetWiFiSSID(_pZeDMD, wifissid);
+                    ZeDMD_SetWiFiPassword(_pZeDMD, wifipassword);
                     //Esp32Device.ZeDMD_SetWiFiPort(_pZeDMD, 3333);
                 }
-                Esp32Device.ZeDMD_SaveSettings(_pZeDMD);
-                Esp32Device.ZeDMD_Close(_pZeDMD);
+                ZeDMD_SaveSettings(_pZeDMD);
+                ZeDMD_Close(_pZeDMD);
                 device.Brightness = brightness;
                 device.RgbOrder = rgborder;
                 device.PanelClockPhase = panelclockphase;
@@ -97,8 +110,11 @@ namespace ZeDMD_Updater2
             else
             {
                 MessageBox.Show("Unable to Open the device on COM" + device.ComId.ToString() + " to set the parameters");
+                logBox += "Unable to Open the device on COM" + device.ComId.ToString() + " to set the parameters\r\n";
+                logres = logBox;
                 return false;
             }
+            logres = logBox;
             return true;
         }
     }
