@@ -45,7 +45,7 @@ Do the same if your device is a Lilygo.
 ![image](https://github.com/user-attachments/assets/3178c1bb-c3cd-4eff-9a1f-412c859a5bcf)
 
 Above you see the result of flashing both devices with the firmware v5.1.7. Now communication with the ZeDMD is possible and all the info are up to date.  
-  
+If the version is not the latest official release, it will be displayed in red.  
 Caution: Firmware **v5.1.7+** is needed for the updater to fully communicate with the device.
 
 ## Flashing the selected device
@@ -63,7 +63,8 @@ After flashing a ZeDMD, the device list is automatically rescanned.
 ![image](https://github.com/user-attachments/assets/195d2f8a-6832-4237-a0bd-3f7fcd29189d)
 
 There are different parameters that can be changed if you have issues with your device. I suggest you have a look at the official ZeDMD Github in the [description table here](https://github.com/PPUC/ZeDMD/blob/main/README.md#advanced-settings).  
-Especially, 2 values deserve your attention to get the smoothest animations:
+The RGB order let you adapt the firmware to your led matrix panels. While the logo is displayed on your ZeDMD, if the top left is not red or the bottom left is not green or the top right is not blue, you must change this value until this is as expected.  
+2 values deserve your attention to get the smoothest animations:
 - If your ZeDMD is connecting via USB, we recommend that you have a look at the "USB Package Size". This value should be the highest possible according to your hardware (ESP32/S3, cable quality, etc...), so always start from a low value, then increase as long as you have no issue.
 - Whatever the connection mode, the panel "Minimum refresh rate" is important too. As written in the ZeDMD Github readme: "The default of 30Hz is very low. Try to increase it. 60Hz is a good value for ZeDMD HD, 90Hz for ZeDMD."
 Once you have changed all the parameters you need, click "Set new parameters" and they'll be modified. As this takes a lot of time, the devices connected are not automatically rescanned, you can do it by yourself.
