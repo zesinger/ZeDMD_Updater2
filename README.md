@@ -56,6 +56,7 @@ You have 2 different ways to flash your device:
 - Choose which released version available on the official Github and what resolution your panels are before clicking the "Download and flash" button
 
 After flashing a ZeDMD, the device list is automatically rescanned.
+Caution: Flashing and setting the parameters are 2 different things, flashing won't modify the parameters as chosen in the right part of the window.
 
 ## Changing the parameters of the selected device
 
