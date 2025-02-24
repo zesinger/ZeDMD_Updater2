@@ -38,7 +38,6 @@ The ZeDMD firmware accepts Lilygo S3 devices too.
 
 If you look at the image above, there are 3 shown devices. All the devices connected to the PC via a USB COM port are listed here. You can check the Windows device manager in "Ports (COM & LPT)" to see them too.  
 In the example above, the one declared as "Stock ESP32" is an original one and the third one declared as "Unknown" on COM5 is a S3, both with no ZeDMD firmware. The first on COM1 is just another device, not an ESP32.  
-
 As you see, the ESP32 S3 is NOT recognized as a "S3", because there is no way to know it. So to be sure that it will receive a S3 firmware when flashing, you must **double click** on the "no" of its "S3" column that will be changed to "yes".
 Do the same if your device is a Lilygo.
 
