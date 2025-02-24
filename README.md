@@ -30,10 +30,38 @@ If so, you'll need to do it twice as the esptool is run twice.
 ![ESP32S3](https://github.com/user-attachments/assets/b610741a-4f3d-4cd9-97c6-9d8a84fd2e77)
 
 As shown above, the device must be connected with the left plug (known as CDC). You shouldn't have any issue when flashing, no need to play with any button.  
+The ZeDMD firmware accepts Lilygo S3 devices too.
 
 ## Autodetecting devices
 
-When an ESP32 has no ZeDMD firmware, it can't be recognized, above all the ESP32 S3 through the CDC plug. So all the devices listed with a "COM" in the Windows device manager, section "Ports (COM & LPT)" will be shown in the program as any of them COULD be an ESP32.  
-For original ESP32, 
+![image](https://github.com/user-attachments/assets/817c186d-82aa-4dff-a602-9b7d9d63327d)
 
+If you look at the image above, there are 3 shown devices. All the devices connected to the PC via a USB COM port are listed here. You can check the Windows device manager in "Ports (COM & LPT)" to see them too.  
+In the example above, the one declared as "Stock ESP32" is an original one and the third one declared as "Unknown" on COM5 is a S3, both with no ZeDMD firmware. The first on COM1 is just another device, not an ESP32.  
 
+As you see, the ESP32 S3 is NOT recognized as a "S3", because there is no way to know it. So to be sure that it will receive a S3 firmware when flashing, you must **double click** on the "no" of its "S3" column that will be changed to "yes".
+Do the same if your device is a Lilygo.
+
+![image](https://github.com/user-attachments/assets/3178c1bb-c3cd-4eff-9a1f-412c859a5bcf)
+
+Above you see the result of flashing both devices with the firmware v5.1.7. Now communication with the ZeDMD is possible and all the info are up to date.  
+  
+Caution: Firmware **v5.1.7+** is needed for the updater to fully communicate with the device.
+
+## Flashing the selected device
+
+![image](https://github.com/user-attachments/assets/e3b454b1-8219-4818-b1ec-ced68459166a)
+
+You have 2 different ways to flash your device:
+- Click on the "Flash from a file" button and browse for a specific "ZeDMD.bin" firmware file you have on your computer
+- Choose which released version available on the official Github and what resolution your panels are before clicking the "Download and flash" button
+
+After flashing a ZeDMD, the device list is automatically updated.
+
+## Changing the parameters of the selected device
+
+![image](https://github.com/user-attachments/assets/195d2f8a-6832-4237-a0bd-3f7fcd29189d)
+
+There are different parameters that can be changed if you have issues with your device:
+
+- If you want your ZeDMD to be a WiFi device 
