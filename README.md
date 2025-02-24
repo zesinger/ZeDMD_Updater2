@@ -56,12 +56,14 @@ You have 2 different ways to flash your device:
 - Click on the "Flash from a file" button and browse for a specific "ZeDMD.bin" firmware file you have on your computer
 - Choose which released version available on the official Github and what resolution your panels are before clicking the "Download and flash" button
 
-After flashing a ZeDMD, the device list is automatically updated.
+After flashing a ZeDMD, the device list is automatically rescanned.
 
 ## Changing the parameters of the selected device
 
 ![image](https://github.com/user-attachments/assets/195d2f8a-6832-4237-a0bd-3f7fcd29189d)
 
-There are different parameters that can be changed if you have issues with your device:
-
-- If you want your ZeDMD to be a WiFi device 
+There are different parameters that can be changed if you have issues with your device. I suggest you have a look at the official ZeDMD Github in the [description table here](https://github.com/PPUC/ZeDMD/blob/main/README.md#advanced-settings).  
+Especially, 2 values deserve your attention to get the smoothest animations:
+- If your ZeDMD is connecting via USB, we recommend that you have a look at the "USB Package Size". This value should be the highest possible according to your hardware (ESP32/S3, cable quality, etc...), so always start from a low value, then increase as long as you have no issue.
+- Whatever the connection mode, the panel "Minimum refresh rate" is important too. As written in the ZeDMD Github readme: "The default of 30Hz is very low. Try to increase it. 60Hz is a good value for ZeDMD HD, 90Hz for ZeDMD."
+Once you have changed all the parameters you need, click "Set new parameters" and they'll be modified. As this takes a lot of time, the devices connected are not automatically rescanned, you can do it by yourself.
